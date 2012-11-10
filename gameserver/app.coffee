@@ -2,11 +2,13 @@
 Module dependencies.
 ###
 
-express = require("express")
-routes = require("./routes")
-user = require("./routes/user")
-http = require("http")
-path = require("path")
+express = require 'express'
+routes  = require './routes'
+http    = require 'http'
+path    = require 'path'
+stylus  = require 'stylus'
+
+
 app = express()
 app.configure ->
   app.set "port", process.env.PORT or 3000
@@ -20,13 +22,20 @@ app.configure ->
   app.use express.session()
   app.use app.router
   app.use require('connect-assets')()
+  app.use stylus.middleware({ src: __dirname, compile: compile})
   app.use express["static"](path.join(__dirname, "public"))
+
+compile = (str, path) ->
+  return stylus(str)
+    .set 'filename', path
+    .set 'compress', true
+    .use nib()
 
 app.configure "development", ->
   app.use express.errorHandler()
 
 app.get "/", routes.index
-app.get "/users", user.list
+
 server = http.createServer(app).listen(app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
 )

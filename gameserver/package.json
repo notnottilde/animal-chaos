@@ -1,6 +1,6 @@
 {
   "name": "animal-chaos",
-  "version": "0.0.1-1",
+  "version": "0.0.1-2",
   "private": true,
   "scripts": {
     "start": "coffee app.coffee"
@@ -9,9 +9,10 @@
     "express": "3.0.1",
     "jade": "*",
     "stylus": "*",
-    "coffee-script":"*",
+    "nib":"0.8.2",
+    "coffee-script": "*",
     "socket.io": "0.9.11",
-    "connect-assets":"2.3.3"
+    "connect-assets": "2.3.3"
   },
   "subdomain": "animal-chaos",
   "engines": {
