@@ -37,11 +37,17 @@ server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
-io = require('socket.io').listen(server);
+var io = require('socket.io').listen(server);
 
+//Socket.io emits this event when a connection is made.
 io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
+
+  // Emit a message to send it to the client.
+  socket.emit('ping', { msg: 'Hello. I know socket.io.' });
+
+  // Print messages from the client.
+  socket.on('pong', function (data) {
+    console.log(data.msg);
   });
+
 });
