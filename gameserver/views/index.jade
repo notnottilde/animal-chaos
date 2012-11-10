@@ -3,8 +3,8 @@ extends layout
 block content
   h1 Animal Chaos
   p Welcome to the jungle
-  #msg
+  #game-canvas
 
 block scripts
     script(src='/socket.io/socket.io.js')
-    script(src="javascripts/app.js")
+    != js('app')
