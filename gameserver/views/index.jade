@@ -1,5 +1,9 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1 Animal Chaos
+  p Welcome to the jungle
+
+block scripts
+    script(src='/socket.io/socket.io.js')
+    script(src="javascripts/app.js")
