@@ -1,1 +1,0 @@
-exports.Room = require './room'

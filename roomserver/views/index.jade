@@ -1,8 +1,0 @@
-extends layout
-
-block content
-	h1 Animal Chaos Rooms
-	ul
-		each room in rooms
-			li
-				a(href='/rooms/info/'+room._id) #{room.name} - #{room.info.count}/#{room.info.capacity}
