@@ -7,6 +7,11 @@ routes  = require './routes'
 http    = require 'http'
 path    = require 'path'
 stylus  = require 'stylus'
+request = require 'request'
+
+#request {uri:'http://localhost:4000'}, (error, response, body) ->
+# if !error && response.statusCode == 200
+    
 
 
 app = express()
@@ -54,13 +59,14 @@ io.sockets.on "connection", (socket) ->
   # When a new player joins, add them to the list
   # and notify other connected clients
   socket.on "player_joining", (player) ->
+    socket.set "id", player.id
     players[player.id] = player
     socket.broadcast.volatile.emit "player_joined", player
 
   # When a player leaves, remove them from the list
   # and notify other connected clients
   socket.on "player_leaving", (player) ->
-    players[player.id] = null
+    delete players[player.id]
     socket.broadcast.volatile.emit "player_left", player
 
   # When a player moves, update the server position
@@ -69,7 +75,13 @@ io.sockets.on "connection", (socket) ->
       players[player.id] = player
       socket.broadcast.emit 'position_changed', player
 
+  socket.on "disconnect", ->
+    socket.get "id", (id) ->
+      delete players[id]
+      socket.broadcast.volatile.emit "player_left", {id:id}
+
+
 send_player_list = ->
-  io.sockets.emit "player_list",
-      players: players
+  io.sockets.volatile.emit "player_list",
+      players
 
