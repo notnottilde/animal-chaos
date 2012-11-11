@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "animal-chaos-roomserver",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
     "stylus": "*",
     "nib": "0.8.2",
     "coffee-script": "*",
-    "connect-assets": "2.3.3"
+    "connect-assets": "2.3.3",
+    "mongoose":"3.4.0"
   }
 }

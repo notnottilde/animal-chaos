@@ -2,12 +2,19 @@
 Module dependencies.
 ###
 
-express = require 'express'
-routes  = require './routes'
-http    = require 'http'
-path    = require 'path'
-stylus  = require 'stylus'
+express  = require 'express'
+routes   = require './routes'
+http     = require 'http'
+path     = require 'path'
+stylus   = require 'stylus'
+mongoose = require 'mongoose'
 
+mongoose.connect "mongodb://ac-user:get$getpaid@alex.mongohq.com:10081/animal-chaos-db", ->
+  console.log 'Animal-Chaos room server connected to mongo successfully'
+
+
+# Bootstrap Models
+require './models'
 
 app = express()
 app.configure ->
@@ -35,6 +42,8 @@ app.configure "development", ->
   app.use express.errorHandler()
 
 app.get "/", routes.index
+app.post "/rooms/new.:format?", routes.api.new
+app.get "/rooms/list.:format?", routes.api.list
 
 server = http.createServer(app).listen(app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
