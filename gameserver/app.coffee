@@ -52,3 +52,6 @@ io.sockets.on "connection", (socket) ->
   # Print messages from the client.
   socket.on "pong", (data) ->
     console.log data.msg
+
+  socket.on "position_change", (data) ->
+    console.log data
