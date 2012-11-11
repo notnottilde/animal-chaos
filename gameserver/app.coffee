@@ -43,7 +43,7 @@ io = require("socket.io").listen(server)
 
 players = {}
 
-
+io.set 'log level', 1
 
 #Socket.io emits this event when a connection is made.
 io.sockets.on "connection", (socket) ->
@@ -54,19 +54,18 @@ io.sockets.on "connection", (socket) ->
   # When a new player joins, add them to the list
   # and notify other connected clients
   socket.on "player_joining", (player) ->
-    players[player.id]= player
+    players[player.id] = player
     socket.broadcast.volatile.emit "player_joined", player
 
   # When a player leaves, remove them from the list
   # and notify other connected clients
   socket.on "player_leaving", (player) ->
-    players[player.id]= null
+    players[player.id] = null
     socket.broadcast.volatile.emit "player_left", player
 
   # When a player moves, update the server position
   socket.on "position_changing", (player) ->
-    players[player.id].x=player.x
-    players[player.id].y=player.y
+    players[player.id] = player
     socket.broadcast.emit 'position_changed', player
 
 send_player_list = ->
