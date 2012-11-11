@@ -16,6 +16,12 @@ g_resources = [
 	src: "/images/bear.png"
 ]
 
+AddPlayer = (id, pos) ->
+	console.log "New player: #{id}"
+	newPlayer = new PlayerEntity pos.x, pos.y
+	newPlayer.GUID = id
+	me.game.add newPlayer, 4
+
 game =
 	onload: ->
 		if !me.video.init 'game-canvas', 640, 480, true, 'auto', true
@@ -39,15 +45,22 @@ game =
 
 		me.debug.renderHitBox = true
 
+		window.socket = io.connect()
+
+		socket.on 'player_list', (players) ->
+			window.players = players
+			for id of data
+				do (id) ->
+					AddPlayer(players[id].id, players[id].pos)
+			me.game.sort()
+
 		# start listening for positions
 		socket.on 'position_changed', (data) ->
-			players[data.id] = data
+			window.players[data.id] = data
 
 		socket.on 'player_joined', (data) ->
-			console.log "New player: #{data.id}"
-			newPlayer = new PlayerEntity data.pos.x, data.pos.y
-			newPlayer.GUID = data.id
-			me.game.add newPlayer, 4
+			AddPlayer(data.id, data.pos)
+			window.players[data.id] = data
 			me.game.sort()
 
 		me.state.change me.state.PLAY
@@ -65,12 +78,6 @@ window.onReady () ->
 	window.id = Math.floor ((Math.random() * 1000) + 1)
 
 	window.counter = 0
-
-	window.socket = io.connect()
-
-	socket.on 'player_list', (data) ->
-		window.players = data
-		console.log data
 
 	game.onload()
 
