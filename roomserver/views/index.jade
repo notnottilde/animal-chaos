@@ -1,5 +1,7 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	ul
+		each room in rooms
+			li
+				a(href=room.location) #{room.name} - #{room.info.count}/#{room.info.capacity}

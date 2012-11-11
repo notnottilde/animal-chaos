@@ -41,9 +41,10 @@ compile = (str, path) ->
 app.configure "development", ->
   app.use express.errorHandler()
 
-app.get "/", routes.index
+app.get "/", routes.api.list
 app.post "/rooms/new.:format?", routes.api.new
 app.get "/rooms/list.:format?", routes.api.list
+app.get "/rooms/info/:id.:format?", routes.api.info
 
 server = http.createServer(app).listen(app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
