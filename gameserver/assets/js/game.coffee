@@ -58,10 +58,13 @@ game =
 		socket.on 'position_changed', (data) ->
 			window.players[data.id] = data
 
-		socket.on 'player_joined', (data) ->
-			AddPlayer(data.id, data.pos)
-			window.players[data.id] = data
+		socket.on 'player_joined', (player) ->
+			AddPlayer(player.id, player.pos)
+			window.players[player.id] = player
 			me.game.sort()
+
+		socket.on 'player_left', (player) ->
+			delete window.players[player.id] if window.players[player.id]?
 
 		me.state.change me.state.PLAY
 
