@@ -1,5 +1,5 @@
 {
-  "name": "animal-chaos-roomserver",
+  "name": "ac-roomserver",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -13,5 +13,9 @@
     "coffee-script": "*",
     "connect-assets": "2.3.3",
     "mongoose":"3.4.0"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
   }
 }
