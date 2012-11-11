@@ -41,17 +41,35 @@ server = http.createServer(app).listen(app.get("port"), ->
 )
 io = require("socket.io").listen(server)
 
+players = {}
+
+
+
 #Socket.io emits this event when a connection is made.
 io.sockets.on "connection", (socket) ->
   
-  # Emit a message to send it to the client.
-  socket.emit "ping",
-    msg: "Hello. I know socket.io."
+  # Emit the current list of players on any new connection
+  send_player_list()
 
-  
-  # Print messages from the client.
-  socket.on "pong", (data) ->
-    console.log data.msg
+  # When a new player joins, add them to the list
+  # and notify other connected clients
+  socket.on "player_joining", (player) ->
+    players[player.id]= player
+    socket.broadcast.volatile.emit "player_joined", player
 
-  socket.on "position_change", (data) ->
-    console.log data
+  # When a player leaves, remove them from the list
+  # and notify other connected clients
+  socket.on "player_leaving", (player) ->
+    players[player.id]= null
+    socket.broadcast.volatile.emit "player_left", player
+
+  # When a player moves, update the server position
+  socket.on "position_changing", (player) ->
+    players[player.id].x=player.x
+    players[player.id].y=player.y
+    socket.broadcast.emit 'position_changed', player
+
+send_player_list = ->
+  io.sockets.emit "player_list",
+      players: players
+
