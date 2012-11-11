@@ -12,7 +12,8 @@
     "nib": "0.8.2",
     "coffee-script": "*",
     "socket.io": "0.9.11",
-    "connect-assets": "2.3.3"
+    "connect-assets": "2.3.3",
+    "request":"2.12.0"
   },
   "subdomain": "animal-chaos",
   "engines": {
