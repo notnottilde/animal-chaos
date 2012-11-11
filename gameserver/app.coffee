@@ -76,9 +76,10 @@ io.sockets.on "connection", (socket) ->
       socket.broadcast.emit 'position_changed', player
 
   socket.on "disconnect", ->
-    socket.get "id", (id) ->
+    socket.get "id", (err, id) ->
+      console.log "Player #{id} left"
       delete players[id]
-      socket.broadcast.volatile.emit "player_left", {id:id}
+      socket.broadcast.volatile.emit "player_left", {id: id}
 
 
 send_player_list = ->

@@ -17,10 +17,11 @@ g_resources = [
 ]
 
 AddPlayer = (id, pos) ->
-	console.log "New player: #{id}"
-	newPlayer = new PlayerEntity pos.x, pos.y
-	newPlayer.GUID = id
-	me.game.add newPlayer, 4
+	if not me.game.getEntityByGUID(id)?
+		console.log "New player: #{id}"
+		newPlayer = new PlayerEntity pos.x, pos.y
+		newPlayer.GUID = id
+		me.game.add newPlayer, 4
 
 game =
 	onload: ->
@@ -49,7 +50,7 @@ game =
 
 		socket.on 'player_list', (players) ->
 			window.players = players
-			for id of data
+			for id of players
 				do (id) ->
 					AddPlayer(players[id].id, players[id].pos)
 			me.game.sort()
@@ -64,6 +65,8 @@ game =
 			me.game.sort()
 
 		socket.on 'player_left', (player) ->
+			oldPlayer = me.game.getEntityByGUID(player.id)
+			me.game.remove(oldPlayer, true)
 			delete window.players[player.id] if window.players[player.id]?
 
 		me.state.change me.state.PLAY
