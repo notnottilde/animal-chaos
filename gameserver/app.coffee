@@ -65,7 +65,7 @@ io.sockets.on "connection", (socket) ->
 
   # When a player moves, update the server position
   socket.on "position_changing", (player) ->
-    if player.timestamp > players[player.id].timestamp
+    if player.timestamp > players[player.id]?.timestamp
       players[player.id] = player
       socket.broadcast.emit 'position_changed', player
 

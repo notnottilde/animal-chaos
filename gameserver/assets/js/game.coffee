@@ -64,6 +64,8 @@ PlayScreen = me.ScreenObject.extend(
 window.onReady () ->
 	window.id = Math.floor ((Math.random() * 1000) + 1)
 
+	window.counter = 0
+
 	window.socket = io.connect()
 
 	socket.on 'player_list', (data) ->
@@ -83,11 +85,18 @@ PlayerEntity = me.ObjectEntity.extend(
 	update: ->
 		player = players[@GUID]
 		# console.log "Updating pos for #{player.id}"
-		@pos = new me.Vector2d(player.pos.x, player.pos.y)
-		@vel = player.vel
+		if player?
+			forceAnimate = true
+			@pos.x = player.pos.x
+			@pos.y = player.pos.y
+			@vel.x = player.vel.x
+			@vel.y = player.vel.y
+			@updateMovement()
+		
+		@flipX true if @vel.x < 0
+		@flipX false if @vel.x > 0
 
-		@updateMovement()
-		if @vel.x != 0 || @vel.y != 0
+		if @vel.x != 0 || @vel.y != 0 || forceAnimate
 			@parent this
 			return true
 
@@ -104,24 +113,22 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 
 		@GUID = window.id
 
-		socket.emit 'player_joining', (
-			id: @GUID
-			pos: @pos
-			vel: @vel
-			)
+		socket.emit 'player_joining', MakePlayerJson(this)
 		me.game.viewport.follow @pos, me.game.viewport.AXIS.BOTH
-		setInterval (=>
-
-			), 3000
 
 		console.log "GUID: #{@GUID}"
 
 	update: ->
+		oldPos = new me.Vector2d(@pos.x, @pos.y)
+		oldVel = new me.Vector2d(@vel.x, @vel.y)
+
 		# horizontal movement
 		if me.input.isKeyPressed 'left'
+			keypress = true
 			@flipX true
 			@vel.x -= @accel.x * me.timer.tick
 		else if me.input.isKeyPressed 'right'
+			keypress = true
 			@flipX false
 			@vel.x += @accel.x * me.timer.tick
 		else
@@ -135,13 +142,22 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 
 		# update movement & animate
 		@updateMovement()
+
+		if oldPos.x isnt @pos.x || oldPos.y isnt @pos.y || oldVel.x isnt @vel.x || oldVel.y isnt @vel.y
+			socket.emit 'position_changing', MakePlayerJson(this)
+
 		if @vel.x != 0 || @vel.y != 0
 			@parent this
-			socket.emit 'position_changing',
-				id: window.id
-				pos: @pos
-				vel: @vel
 			return true
 
 		return false
 )
+
+MakePlayerJson = (player) ->
+	playerJson = 
+		id: player.GUID
+		pos: player.pos
+		vel: player.vel
+		falling: player.falling
+		jumping: player.jumping
+		timestamp: window.counter++
