@@ -13,7 +13,11 @@ g_resources = [
 ,
 	name: "bear"
 	type: "image"
-	src: "/images/bear.png"
+	src: "/images/bear.orig.png"
+,
+	name: "bear-sheet"
+	type: "image"
+	src: "/images/sprites/bear/aMothaFuckinBearSheet.png"
 ]
 
 AddPlayer = (id, pos) ->
@@ -25,7 +29,7 @@ AddPlayer = (id, pos) ->
 
 game =
 	onload: ->
-		if !me.video.init 'game-canvas', 640, 480, true, 'auto', true
+		if !me.video.init 'game-canvas', 1024, 768, true, 'auto', true
 			alert "Canvas not supported on your browser"
 			return
 
@@ -119,9 +123,10 @@ PlayerEntity = me.ObjectEntity.extend(
 
 LocalPlayerEntity = me.ObjectEntity.extend(
 	init: (x, y, settings) ->
-		@parent x, y, {image: 'bear', spritewidth: 48}
+		@parent x, y, {image: 'bear-sheet', spritewidth: 310, spriteheight:645}
+		@addAnimation "walk", [0,1,2,3]
 		@setVelocity 3, 15
-		@updateColRect -1, 48, 20, 70
+		@updateColRect -1, 335, 20, 645
 		@name = 'bear'
 
 		@GUID = window.id
@@ -138,10 +143,12 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 		# horizontal movement
 		if me.input.isKeyPressed 'left'
 			keypress = true
+			@setCurrentAnimation "walk"
 			@flipX true
 			@vel.x -= @accel.x * me.timer.tick
 		else if me.input.isKeyPressed 'right'
 			keypress = true
+			@setCurrentAnimation "walk"
 			@flipX false
 			@vel.x += @accel.x * me.timer.tick
 		else
