@@ -11,10 +11,6 @@ g_resources = [
 	type: "tmx"
 	src: "/data/sample.tmx"
 ,
-	name: "bear"
-	type: "image"
-	src: "/images/bear.orig.png"
-,
 	name: "bear-sheet"
 	type: "image"
 	src: "/images/sprites/bear/aMothaFuckinBearSheet.png"
@@ -93,10 +89,21 @@ window.onReady () ->
 
 PlayerEntity = me.ObjectEntity.extend(
 	init: (x, y, settings) ->
-		@parent x, y, {image: 'bear', spritewidth: 48}
+		@parent x, y, {image: 'bear-sheet', spritewidth: 310, spriteheight:620}
+		
+		# jumping animation
+		@addAnimation "jump", [0,1,2,3]
+		# pulling animation
+		@addAnimation "pull", [4,5,6]
+		# pushing animation
+		@addAnimation "push", [4,7,8]
+		# breathing animation
+		@addAnimation "breathe", [4,9,10]
+		# walking animation
+		@addAnimation "walk", [4,11,12,13,14]
+		
 		@setVelocity 3, 15
-		@updateColRect -1, 48, 20, 70
-		@collidable = true
+		@updateColRect -1, 310, 20, 620
 		@name = 'remotePlayer'
 
 	update: ->
@@ -154,12 +161,22 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 		# horizontal movement
 		if me.input.isKeyPressed 'left'
 			keypress = true
-			@setCurrentAnimation "walk"
+			console.log 'animate walking left'
+			
+			# only animate walk when not jumping
+			if not @jumping
+				@setCurrentAnimation "walk"
+			
 			@flipX true
 			@vel.x -= @accel.x * me.timer.tick
 		else if me.input.isKeyPressed 'right'
 			keypress = true
-			@setCurrentAnimation "walk"
+			console.log 'animate walking right'
+			
+			# only animate walk when not jumping
+			if not @jumping
+				@setCurrentAnimation "walk"
+			
 			@flipX false
 			@vel.x += @accel.x * me.timer.tick
 		else
@@ -170,6 +187,8 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 			if not @jumping and not @falling
 				@vel.y -= @maxVel.y * me.timer.tick
 				@jumping = true
+				console.log 'animate jump'
+				@setCurrentAnimation "jump"
 
 		# update movement & animate
 		@updateMovement()
@@ -177,7 +196,12 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 		if oldPos.x isnt @pos.x || oldPos.y isnt @pos.y || oldVel.x isnt @vel.x || oldVel.y isnt @vel.y
 			socket.emit 'position_changing', MakePlayerJson(this)
 
+		# always render since we have a breathing animation
 		if @vel.x != 0 || @vel.y != 0
+			@parent this
+			return true
+		else
+			@setCurrentAnimation "breathe"
 			@parent this
 			return true
 
