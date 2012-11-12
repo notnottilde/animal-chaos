@@ -8,10 +8,7 @@ http    = require 'http'
 path    = require 'path'
 stylus  = require 'stylus'
 request = require 'request'
-
-#request {uri:'http://localhost:4000'}, (error, response, body) ->
-#  if !error && response.statusCode == 200
-    
+config  = require './config'
 
 
 app = express()
@@ -81,8 +78,19 @@ io.sockets.on "connection", (socket) ->
       delete players[id]
       socket.broadcast.volatile.emit "player_left", {id: id}
 
-
+# Socket.io methods
 send_player_list = ->
   io.sockets.volatile.emit "player_list",
       players
+
+# Send Room Server Updates
+room_server = config.room_server[app.get('env')]+'/rooms/checkin'
+console.log 'sent an update to the room server '+room_server
+
+request.post { uri:room_server, json:config.info }, (e, r, b) ->
+  if not e and r.statusCode == 200
+    console.log "checkin response #{JSON.stringify(b)}"
+  else
+    console.log "checkin error #{e}"
+
 
