@@ -123,10 +123,21 @@ PlayerEntity = me.ObjectEntity.extend(
 
 LocalPlayerEntity = me.ObjectEntity.extend(
 	init: (x, y, settings) ->
-		@parent x, y, {image: 'bear-sheet', spritewidth: 310, spriteheight:645}
-		@addAnimation "walk", [0,1,2,3]
+		@parent x, y, {image: 'bear-sheet', spritewidth: 310, spriteheight:620}
+		
+		# jumping animation
+		@addAnimation "jump", [0,1,2,3]
+		# pulling animation
+		@addAnimation "pull", [4,5,6]
+		# pushing animation
+		@addAnimation "push", [4,7,8]
+		# breathing animation
+		@addAnimation "breathe", [4,9,10]
+		# walking animation
+		@addAnimation "walk", [4,11,12,13,14]
+		
 		@setVelocity 3, 15
-		@updateColRect -1, 335, 20, 645
+		@updateColRect -1, 310, 20, 620
 		@name = 'bear'
 
 		@GUID = window.id
