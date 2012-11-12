@@ -12,21 +12,21 @@
 
 .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(aMothaFuckinBearSheet.png);}
 
-.BearJumping_jump {width:310px; height:620px; background-position: -0px -0px} //0
-.BearJumping_jump1 {width:310px; height:620px; background-position: -310px -0px} //1
-.BearJumping_jump2 {width:310px; height:620px; background-position: -620px -0px} //2
-.BearJumping_jump3 {width:310px; height:620px; background-position: -930px -0px} //3
-.BearPull_pull1 {width:310px; height:620px; background-position: -1240px -0px}  //4
-.BearPull_pull2 {width:310px; height:620px; background-position: -0px -620px} //5
-.BearPull_pull3 {width:310px; height:620px; background-position: -310px -620px} //6
-.BearPush_push1 {width:310px; height:620px; background-position: -1240px -0px} //4
-.BearPush_push2 {width:310px; height:620px; background-position: -620px -620px} //7
-.BearPush_push3 {width:310px; height:620px; background-position: -930px -620px}  //8
-.BearStationary_Breathe2 {width:310px; height:620px; background-position: -1240px -620px} //9
-.BearStationary_Breathe3 {width:310px; height:620px; background-position: -0px -1240px} //10
-.BearStationary_breathe1 {width:310px; height:620px; background-position: -1240px -0px} //4
-.BearWalking_walk1 {width:310px; height:620px; background-position: -1240px -0px} //4
-.BearWalking_walk2 {width:310px; height:620px; background-position: -310px -1240px} //11
-.BearWalking_walk3 {width:310px; height:620px; background-position: -620px -1240px} //12
-.BearWalking_walk4 {width:310px; height:620px; background-position: -930px -1240px} //13
-.BearWalking_walk5 {width:310px; height:620px; background-position: -1240px -1240px} //14
+.BearJumping_jump {width:310px; height:620px; background-position: -0px -0px}
+.BearJumping_jump1 {width:310px; height:620px; background-position: -310px -0px}
+.BearJumping_jump2 {width:310px; height:620px; background-position: -620px -0px}
+.BearJumping_jump3 {width:310px; height:620px; background-position: -930px -0px}
+.BearPull_pull1 {width:310px; height:620px; background-position: -1240px -0px}
+.BearPull_pull2 {width:310px; height:620px; background-position: -0px -620px}
+.BearPull_pull3 {width:310px; height:620px; background-position: -310px -620px}
+.BearPush_push1 {width:310px; height:620px; background-position: -1240px -0px}
+.BearPush_push2 {width:310px; height:620px; background-position: -620px -620px}
+.BearPush_push3 {width:310px; height:620px; background-position: -930px -620px}
+.BearStationary_Breathe2 {width:310px; height:620px; background-position: -1240px -620px}
+.BearStationary_Breathe3 {width:310px; height:620px; background-position: -0px -1240px}
+.BearStationary_breathe1 {width:310px; height:620px; background-position: -1240px -0px}
+.BearWalking_walk1 {width:310px; height:620px; background-position: -1240px -0px}
+.BearWalking_walk2 {width:310px; height:620px; background-position: -310px -1240px}
+.BearWalking_walk3 {width:310px; height:620px; background-position: -620px -1240px}
+.BearWalking_walk4 {width:310px; height:620px; background-position: -930px -1240px}
+.BearWalking_walk5 {width:310px; height:620px; background-position: -1240px -1240px}
