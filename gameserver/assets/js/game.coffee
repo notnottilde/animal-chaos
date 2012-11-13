@@ -13,7 +13,7 @@ g_resources = [
 ,
 	name: "bear-sheet"
 	type: "image"
-	src: "/images/sprites/bear/aMothaFuckinBearSheet.png"
+	src: "/images/sprites/bear/aMothaFuckinBearSheet_small.png"
 ]
 
 AddPlayer = (id, pos) ->
@@ -25,7 +25,7 @@ AddPlayer = (id, pos) ->
 
 game =
 	onload: ->
-		if !me.video.init 'game-canvas', 1024, 768, true, 'auto', true
+		if !me.video.init 'game-canvas', 1024,  768, true, '1.0', false
 			alert "Canvas not supported on your browser"
 			return
 
@@ -40,9 +40,12 @@ game =
 
 		me.entityPool.add 'localPlayer', LocalPlayerEntity
 
+		me.input.bindKey me.input.KEY.LEFT, 'left'
 		me.input.bindKey me.input.KEY.A, 'left'
 		me.input.bindKey me.input.KEY.D, 'right'
+		me.input.bindKey me.input.KEY.RIGHT, 'right'
 		me.input.bindKey me.input.KEY.W, 'jump', true
+		me.input.bindKey me.input.KEY.UP, 'jump', true
 
 		me.debug.renderHitBox = true
 
@@ -89,7 +92,7 @@ window.onReady () ->
 
 PlayerEntity = me.ObjectEntity.extend(
 	init: (x, y, settings) ->
-		@parent x, y, {image: 'bear-sheet', spritewidth: 310, spriteheight:620}
+		@parent x, y, {image: 'bear-sheet', spritewidth: 64, spriteheight:128}
 		
 		# jumping animation
 		@addAnimation "jump", [0,1,2,3]
@@ -130,7 +133,7 @@ PlayerEntity = me.ObjectEntity.extend(
 
 LocalPlayerEntity = me.ObjectEntity.extend(
 	init: (x, y, settings) ->
-		@parent x, y, {image: 'bear-sheet', spritewidth: 310, spriteheight:620}
+		@parent x, y, {image: 'bear-sheet', spritewidth: 64, spriteheight:128}
 		
 		# jumping animation
 		@addAnimation "jump", [0,1,2,3]
@@ -144,7 +147,7 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 		@addAnimation "walk", [4,11,12,13,14]
 		
 		@setVelocity 3, 15
-		@updateColRect -1, 310, 20, 620
+		#@updateColRect -1, 310, 20, 590
 		@name = 'bear'
 
 		@GUID = window.id
@@ -196,16 +199,13 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 		if oldPos.x isnt @pos.x || oldPos.y isnt @pos.y || oldVel.x isnt @vel.x || oldVel.y isnt @vel.y
 			socket.emit 'position_changing', MakePlayerJson(this)
 
-		# always render since we have a breathing animation
-		if @vel.x != 0 || @vel.y != 0
-			@parent this
-			return true
-		else
+		# breathe when standing still
+		if @vel.x is 0 and @vel.y is 0
 			@setCurrentAnimation "breathe"
-			@parent this
-			return true
-
-		return false
+		
+		# always render an animation
+		@parent this
+		return true
 )
 
 MakePlayerJson = (player) ->
