@@ -1,7 +1,7 @@
 g_resources = [
-	name: "area03_level_tiles"
+	name: "area03_level_tiles_retina"
 	type: "image"
-	src: "/images/area03_level_tiles.png"
+	src: "/images/area03_level_tiles_retina.png"
 ,
 	name: "metatiles32x32"
 	type: "image"
@@ -9,14 +9,14 @@ g_resources = [
 ,
 	name: "sample"
 	type: "tmx"
-	src: "/data/sample.tmx"
+	src: "/data/sample_retina.tmx"
 ,
 	name: "bear-sheet"
 	type: "image"
-	src: "/images/sprites/bear/aMothaFuckinBearSheet_small.png"
+	src: "/images/sprites/bear/aMothaFuckinBearSheet_retina.png"
 ]
 
-AddPlayer = (id, pos) ->
+AddPlayer = (player) ->
 	if not me.game.getEntityByGUID(id)?
 		console.log "New player: #{id}"
 		newPlayer = new PlayerEntity pos.x, pos.y
@@ -25,9 +25,12 @@ AddPlayer = (id, pos) ->
 
 game =
 	onload: ->
-		if !me.video.init 'game-canvas', 1024,  768, true, '1.0', false
+		if !me.video.init 'game-canvas', 2048,  1536, true, '1.0', false
 			alert "Canvas not supported on your browser"
 			return
+		me.video.getScreenCanvas().style.width = '1024px'
+		me.video.getScreenCanvas().style.height = '768px'
+
 
 		me.loader.onload = @loaded.bind this
 
@@ -53,9 +56,9 @@ game =
 
 		socket.on 'player_list', (players) ->
 			window.players = players
-			for id of players
-				do (id) ->
-					AddPlayer(players[id].id, players[id].pos)
+			for player in players
+				do (player) ->
+					AddPlayer(player)
 			me.game.sort()
 
 		# start listening for positions
@@ -63,7 +66,7 @@ game =
 			window.players[data.id] = data
 
 		socket.on 'player_joined', (player) ->
-			AddPlayer(player.id, player.pos)
+			AddPlayer player
 			window.players[player.id] = player
 			me.game.sort()
 
@@ -133,7 +136,7 @@ PlayerEntity = me.ObjectEntity.extend(
 
 LocalPlayerEntity = me.ObjectEntity.extend(
 	init: (x, y, settings) ->
-		@parent x, y, {image: 'bear-sheet', spritewidth: 64, spriteheight:128}
+		@parent x, y, {image: 'bear-sheet', spritewidth: 128, spriteheight:256}
 		
 		# jumping animation
 		@addAnimation "jump", [0,1,2,3]
@@ -155,7 +158,7 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 		socket.emit 'player_joining', MakePlayerJson(this)
 		me.game.viewport.follow @pos, me.game.viewport.AXIS.BOTH
 
-		console.log "GUID: #{@GUID}"
+		#console.log "GUID: #{@GUID}"
 
 	update: ->
 		oldPos = new me.Vector2d(@pos.x, @pos.y)
@@ -164,7 +167,7 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 		# horizontal movement
 		if me.input.isKeyPressed 'left'
 			keypress = true
-			console.log 'animate walking left'
+			#console.log 'animate walking left'
 			
 			# only animate walk when not jumping
 			if not @jumping
@@ -174,7 +177,7 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 			@vel.x -= @accel.x * me.timer.tick
 		else if me.input.isKeyPressed 'right'
 			keypress = true
-			console.log 'animate walking right'
+			#console.log 'animate walking right'
 			
 			# only animate walk when not jumping
 			if not @jumping
@@ -190,7 +193,7 @@ LocalPlayerEntity = me.ObjectEntity.extend(
 			if not @jumping and not @falling
 				@vel.y -= @maxVel.y * me.timer.tick
 				@jumping = true
-				console.log 'animate jump'
+				#console.log 'animate jump'
 				@setCurrentAnimation "jump"
 
 		# update movement & animate

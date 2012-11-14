@@ -9,6 +9,9 @@ path    = require 'path'
 stylus  = require 'stylus'
 request = require 'request'
 config  = require './config'
+god     = require './lib/god'
+console.log(god)
+players = require './lib/players'
 
 
 app = express()
@@ -43,8 +46,6 @@ server = http.createServer(app).listen(app.get("port"), ->
 )
 io = require("socket.io").listen(server)
 
-players = {}
-
 io.set 'log level', 1
 
 #Socket.io emits this event when a connection is made.
@@ -57,31 +58,30 @@ io.sockets.on "connection", (socket) ->
   # and notify other connected clients
   socket.on "player_joining", (player) ->
     socket.set "id", player.id
-    players[player.id] = player
+    players.add player, (players) ->
+        if players.length is 1
+          god.start()
     socket.broadcast.volatile.emit "player_joined", player
-
-  # When a player leaves, remove them from the list
-  # and notify other connected clients
-  socket.on "player_leaving", (player) ->
-    delete players[player.id]
-    socket.broadcast.volatile.emit "player_left", player
 
   # When a player moves, update the server position
   socket.on "position_changing", (player) ->
     if player.timestamp > players[player.id]?.timestamp
-      players[player.id] = player
+      players.update player
       socket.broadcast.emit 'position_changed', player
 
+  # When a player disconnects, notify the other players
   socket.on "disconnect", ->
     socket.get "id", (err, id) ->
       console.log "Player #{id} left"
-      delete players[id]
+      players.remove id, (players) ->
+        if players.length is 0
+          god.stop()
+
       socket.broadcast.volatile.emit "player_left", {id: id}
 
 # Socket.io methods
 send_player_list = ->
-  io.sockets.volatile.emit "player_list",
-      players
+  io.sockets.volatile.emit "player_list", players
 
 # Send Room Server Updates
 room_server = config.room_server[app.get('env')]+'/rooms/checkin'
@@ -92,5 +92,13 @@ request.post { uri:room_server, json:config.info }, (e, r, b) ->
     console.log "checkin response #{JSON.stringify(b)}"
   else
     console.log "checkin error #{e}"
+
+god.on 'chosen', (player) ->
+  if player?
+    console.log "player #{player.id} chosen as new god"
+  else
+    console.log "no player available to play god"
+
+
 
 
